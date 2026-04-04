@@ -33,10 +33,11 @@ const Scanner = () => {
   };
 
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
     if (file) {
       startScan(file);
     }
+    e.target.value = '';
   };
 
   return (
@@ -85,18 +86,42 @@ const Scanner = () => {
         position: 'absolute', bottom: 0, left: 0, right: 0, padding: '32px', display: 'flex', justifyContent: 'space-around', alignItems: 'center',
         background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%)', zIndex: 10
       }}>
-        <button style={{ background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(10px)', border: 'none', borderRadius: '50%', width: '48px', height: '48px', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <input
+          type="file"
+          id="galleryInput"
+          accept="image/*"
+          onChange={handleFileChange}
+          style={{ display: 'none' }}
+        />
+        <label
+          htmlFor="galleryInput"
+          style={{
+            background: 'rgba(255,255,255,0.2)',
+            backdropFilter: 'blur(10px)',
+            border: 'none',
+            borderRadius: '50%',
+            width: '48px',
+            height: '48px',
+            color: 'white',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: isScanning ? 'not-allowed' : 'pointer',
+            opacity: isScanning ? 0.5 : 1,
+            pointerEvents: isScanning ? 'none' : 'auto',
+          }}
+        >
           <ImageIcon size={24} />
-        </button>
-        
-        {/* Hidden File Input */}
-        <input 
-          type="file" 
-          id="cameraInput" 
-          accept="image/*" 
-          capture="environment" 
-          onChange={handleFileChange} 
-          style={{ display: 'none' }} 
+        </label>
+
+        {/* Opens camera directly on mobile (capture); separate from gallery so library works */}
+        <input
+          type="file"
+          id="cameraInput"
+          accept="image/*"
+          capture="environment"
+          onChange={handleFileChange}
+          style={{ display: 'none' }}
         />
         <label 
           htmlFor="cameraInput"
