@@ -6,7 +6,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:3000/api/dashboard')
+    fetch('https://cropguard-8rie.onrender.com/api/dashboard')
       .then(r => r.json())
       .then(json => {
         if (json.success) setStats(json.data.stats);

@@ -11,7 +11,7 @@ const FieldManagement = () => {
 
   const fetchFields = async () => {
     try {
-      const res = await fetch('http://localhost:3000/api/fields');
+      const res = await fetch('https://cropguard-8rie.onrender.com/api/fields');
       const json = await res.json();
       if (json.success) setFields(json.data);
       setLoading(false);
@@ -26,7 +26,7 @@ const FieldManagement = () => {
     if (!name) return;
 
     try {
-      const res = await fetch('http://localhost:3000/api/fields', {
+      const res = await fetch('https://cropguard-8rie.onrender.com/api/fields', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, crop: 'Unknown Field', area: '10 Acres' })

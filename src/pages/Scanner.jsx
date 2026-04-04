@@ -13,7 +13,7 @@ const Scanner = () => {
       const formData = new FormData();
       formData.append('image', file, 'scan.jpg');
 
-      const response = await fetch('http://localhost:3000/api/scan', {
+      const response = await fetch('https://cropguard-8rie.onrender.com/api/scan', {
         method: 'POST',
         body: formData
       });
