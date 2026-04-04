@@ -39,8 +39,8 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// Setup multer for image uploads
-const upload = multer({ dest: 'uploads/' });
+// Setup multer for image uploads using MemoryStorage so it works securely on Render
+const upload = multer({ storage: multer.memoryStorage() });
 
 // Routes
 
@@ -151,8 +151,8 @@ app.post('/api/scan', upload.single('image'), async (req, res) => {
         return res.status(400).json({ success: false, message: 'No image uploaded' });
       }
 
-      // Read file and convert to base64
-      const imageAsBase64 = fs.readFileSync(req.file.path, 'base64');
+      // Read file directly from secure memory buffer
+      const imageAsBase64 = req.file.buffer.toString('base64');
 
       // Hit Plant.id Health Assessment API
       const plantIdResponse = await axios.post('https://api.plant.id/v2/health_assessment', {
@@ -165,8 +165,7 @@ app.post('/api/scan', upload.single('image'), async (req, res) => {
 
       const data = plantIdResponse.data;
 
-      // Clean up uploaded file
-      try { fs.unlinkSync(req.file.path); } catch (e) { }
+      // Cleanup is automatically handled by garbage collector with memory storage
 
       // Parse response securely
       const diseaseData = data.health_assessment?.diseases?.[0] || null;
