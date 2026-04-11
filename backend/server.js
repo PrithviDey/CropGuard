@@ -142,7 +142,7 @@ app.post('/api/scan', upload.single('image'), async (req, res) => {
       // Simulate delay
       await new Promise(r => setTimeout(r, 2000));
 
-      let isPlant = true;
+      let isPlant = false; // Safely default to false to prevent errors bypassing the check
       if (req.file) {
         try {
           // Check for plant colors using Jimp
@@ -174,11 +174,12 @@ app.post('/api/scan', upload.single('image'), async (req, res) => {
           
           const plantRatio = totalPixels > 0 ? greenBrownPixels / totalPixels : 0;
           console.log('Plant color ratio:', plantRatio);
-          if (plantRatio < 0.05) {
-            isPlant = false;
+          if (plantRatio >= 0.05) { // Needs at least 5% strict green pixels
+            isPlant = true;
           }
         } catch(err) {
           console.log('Jimp processing error:', err.message);
+          // If Jimp fails to read it (e.g. invalid format or too large), we maintain isPlant = false
         }
       }
 
