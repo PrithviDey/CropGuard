@@ -13,15 +13,18 @@ const Results = () => {
   const isHealthy = result.risk === 'Low';
 
   return (
-    <div className="animate-fade-in" style={{ padding: '24px', paddingBottom: '90px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
+    <div className="animate-fade-in" style={{ padding: '24px', paddingBottom: '90px', position: 'relative', overflow: 'hidden', minHeight: '100vh' }}>
+      <div className="bg-orb-1"></div>
+      <div className="bg-orb-2"></div>
+      
+      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px', position: 'relative', zIndex: 1 }}>
         <button onClick={() => navigate('/')} style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex' }}>
           <ArrowLeft size={24} color="var(--text-dark)" />
         </button>
         <h2 className="text-h2">Scan Results</h2>
       </div>
 
-      <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+      <div className="glass-card" style={{ padding: 0, overflow: 'hidden', position: 'relative', zIndex: 1, border: '1px solid rgba(255,255,255,0.6)' }}>
         <div style={{ 
           height: '200px', 
           backgroundColor: isHealthy ? '#e6f7eb' : '#fceaea',
@@ -44,7 +47,7 @@ const Results = () => {
             }}>{result.confidence}%</div>
           </div>
 
-          <div style={{ background: isHealthy ? '#f0fcf4' : '#fdf3f2', borderRadius: '12px', padding: '16px', marginBottom: '24px', borderLeft: `4px solid ${isHealthy ? 'var(--primary-green)' : 'var(--danger)'}` }}>
+          <div style={{ background: isHealthy ? 'rgba(46, 204, 113, 0.1)' : 'rgba(231, 76, 60, 0.1)', borderRadius: '12px', padding: '16px', marginBottom: '24px', borderLeft: `4px solid ${isHealthy ? 'var(--primary-green)' : 'var(--danger)'}`, backdropFilter: 'blur(10px)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', color: isHealthy ? 'var(--primary-dark)' : 'var(--danger)' }}>
               {isHealthy ? <CheckCircle size={18} /> : <AlertTriangle size={18} />}
               <span className="text-bold">{result.risk} Risk Detected</span>
