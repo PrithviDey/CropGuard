@@ -40,11 +40,15 @@ const Login = () => {
   };
 
   return (
-    <div className="animate-fade-in" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--bg-body)' }}>
+    <div className="animate-fade-in" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--bg-body)', position: 'relative', overflow: 'hidden' }}>
+      <div className="bg-orb-1"></div>
+      <div className="bg-orb-2" style={{ top: 'auto', bottom: '-100px', left: '-100px', right: 'auto' }}></div>
+      <div className="bg-orb-1" style={{ top: '50%', left: 'auto', right: '-100px', transform: 'translateY(-50%)', background: 'radial-gradient(circle, rgba(41, 128, 185, 0.15) 0%, rgba(41, 128, 185, 0) 70%)' }}></div>
+      
       {/* Top Banner */}
       <div style={{
         flex: 1,
-        backgroundColor: 'var(--primary-light)',
+        background: 'transparent',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -61,14 +65,16 @@ const Login = () => {
       </div>
 
       {/* Form Container */}
-      <div style={{
+      <div className="glass-card" style={{
         flex: 2,
-        padding: '32px 24px',
-        backgroundColor: 'var(--white)',
+        padding: '40px 24px',
+        margin: '0',
+        borderBottomLeftRadius: 0,
+        borderBottomRightRadius: 0,
         borderTopLeftRadius: '32px',
         borderTopRightRadius: '32px',
         marginTop: '-32px',
-        boxShadow: '0 -4px 24px rgba(0,0,0,0.05)'
+        zIndex: 10
       }}>
         <h2 className="text-h2" style={{ marginBottom: '24px' }}>Welcome Back!</h2>
 
@@ -91,9 +97,14 @@ const Login = () => {
             <a href="#" className="text-sm text-primary text-bold" style={{ textDecoration: 'none' }}>Forgot Password?</a>
           </div>
 
-          <button type="submit" className="btn-primary">
-            Sign In
+          <button type="submit" className="btn-primary" disabled={loading} style={{ opacity: loading ? 0.7 : 1 }}>
+            {loading ? 'Connecting to server...' : 'Sign In'}
           </button>
+          {loading && (
+            <p className="text-sm mt-3 text-center" style={{ color: 'var(--text-muted)', marginTop: '10px' }}>
+              Waking up the server... This may take up to 50s.
+            </p>
+          )}
         </form>
 
         <div style={{ marginTop: '24px', textAlign: 'center' }}>

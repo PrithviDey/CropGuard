@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
 
 :root {
   --primary-green: #2ecc71; /* A vibrant green for agricultural theme */
@@ -23,7 +23,7 @@
   --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
   --shadow-card: 0 12px 36px rgba(0,0,0,0.05);
   
-  --font-family: 'Inter', sans-serif;
+  --font-family: 'Outfit', sans-serif;
 }
 
 body.dark-mode {
@@ -60,8 +60,40 @@ body {
   margin: 0 auto;
   background-color: var(--bg-body);
   position: relative;
-  overflow-x: hidden;
+  overflow: hidden; /* Important for blobs */
   box-shadow: var(--shadow-card);
+}
+
+/* Background Animated Orbs */
+.bg-orb-1 {
+  position: absolute;
+  top: -100px;
+  left: -100px;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(46, 204, 113, 0.15) 0%, rgba(46, 204, 113, 0) 70%);
+  border-radius: 50%;
+  animation: floatBlob 15s ease-in-out infinite alternate;
+  z-index: 0;
+  pointer-events: none;
+}
+.bg-orb-2 {
+  position: absolute;
+  bottom: 100px;
+  right: -150px;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(41, 128, 185, 0.1) 0%, rgba(41, 128, 185, 0) 70%);
+  border-radius: 50%;
+  animation: floatBlob 20s ease-in-out infinite alternate-reverse;
+  z-index: 0;
+  pointer-events: none;
+}
+
+@keyframes floatBlob {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(50px, 80px) scale(1.1); }
+  100% { transform: translate(-30px, -50px) scale(0.9); }
 }
 
 /* Base UI Components */
@@ -89,7 +121,7 @@ body {
 }
 
 .btn-primary:active {
-  transform: translateY(0);
+  transform: translateY(0) scale(0.98);
 }
 
 .btn-outline {
@@ -102,7 +134,15 @@ body {
   font-weight: 600;
   width: 100%;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
+}
+
+.btn-outline:hover {
+  background-color: rgba(46, 204, 113, 0.05);
+}
+
+.btn-outline:active {
+  transform: scale(0.98);
 }
 
 .card {
@@ -111,6 +151,34 @@ body {
   padding: 24px;
   box-shadow: var(--shadow-card);
   margin-bottom: 16px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Glassmorphism Variants */
+.glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: var(--radius-xl);
+  padding: 24px;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.05);
+  margin-bottom: 16px;
+  position: relative;
+  z-index: 1;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.glass-card:hover {
+  box-shadow: 0 12px 40px rgba(31, 38, 135, 0.08);
+  transform: translateY(-2px);
+}
+
+body.dark-mode .glass-card {
+  background: rgba(23, 29, 33, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
 }
 
 .form-group {
@@ -188,22 +256,29 @@ body {
 .text-danger { color: var(--danger); }
 .text-center { text-align: center; }
 
-/* Bottom Nav */
+/* Bottom Nav - Floating Pill */
 .bottom-nav {
   position: fixed;
-  bottom: 0;
+  bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
-  width: 100%;
-  max-width: 480px;
-  background-color: var(--white);
+  width: calc(100% - 48px);
+  max-width: calc(480px - 48px);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
   display: flex;
   justify-content: space-around;
-  padding: 16px 0 24px;
-  box-shadow: 0 -4px 16px rgba(0,0,0,0.04);
+  padding: 12px 8px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.1);
   z-index: 100;
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
+  border-radius: 32px;
+}
+
+body.dark-mode .bottom-nav {
+  background: rgba(23, 29, 33, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .nav-item {
@@ -213,16 +288,28 @@ body {
   gap: 4px;
   color: var(--text-muted);
   text-decoration: none;
-  font-size: 12px;
-  font-weight: 500;
-  transition: color 0.2s;
+  font-size: 11px;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 10px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  background: transparent;
+  border: none;
 }
 
 .nav-item.active {
   color: var(--primary-green);
+  background: rgba(46, 204, 113, 0.1);
+  transform: translateY(-2px);
 }
 
 .nav-item svg {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
+  transition: transform 0.3s;
+}
+
+.nav-item.active svg {
+  transform: scale(1.1);
 }

@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { X, Zap, Camera, Image as ImageIcon } from 'lucide-react';
 
 const Scanner = () => {
   const navigate = useNavigate();
   const [isScanning, setIsScanning] = useState(false);
+  const galleryRef = useRef(null);
 
   const startScan = async (file) => {
     setIsScanning(true);
@@ -88,13 +89,13 @@ const Scanner = () => {
       }}>
         <input
           type="file"
-          id="galleryInput"
+          ref={galleryRef}
           accept="image/*"
           onChange={handleFileChange}
           style={{ display: 'none' }}
         />
-        <label
-          htmlFor="galleryInput"
+        <button
+          onClick={() => galleryRef.current?.click()}
           style={{
             background: 'rgba(255,255,255,0.2)',
             backdropFilter: 'blur(10px)',
@@ -112,7 +113,7 @@ const Scanner = () => {
           }}
         >
           <ImageIcon size={24} />
-        </label>
+        </button>
 
         {/* Opens camera directly on mobile (capture); separate from gallery so library works */}
         <input

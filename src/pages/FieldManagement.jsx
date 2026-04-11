@@ -42,28 +42,30 @@ const FieldManagement = () => {
 
   return (
     <div className="animate-fade-in" style={{ padding: '24px', paddingBottom: '90px' }}>
-      <div className="flex-between" style={{ marginBottom: '24px' }}>
+      <div className="bg-orb-1"></div>
+      <div className="bg-orb-2"></div>
+      <div className="flex-between" style={{ marginBottom: '24px', position: 'relative', zIndex: 1 }}>
         <h2 className="text-h2">My Fields</h2>
         <button onClick={handleAddField} style={{ background: 'var(--primary-light)', color: 'var(--primary-green)', border: 'none', padding: '8px 16px', borderRadius: '20px', fontWeight: '600', cursor: 'pointer' }}>
           + Add Field
         </button>
       </div>
 
-      <div style={{ position: 'relative', marginBottom: '24px' }}>
+      <div style={{ position: 'relative', marginBottom: '24px', zIndex: 1 }}>
         <div style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }}>
           <Search size={20} />
         </div>
         <input 
           type="text" placeholder="Search fields or crops..." 
           className="form-input" 
-          style={{ paddingLeft: '48px', borderRadius: '24px', border: 'none', backgroundColor: '#fff', boxShadow: '0 2px 8px rgba(0,0,0,0.02)' }} 
+          style={{ paddingLeft: '48px', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.5)', backgroundColor: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(10px)', boxShadow: '0 4px 16px rgba(0,0,0,0.05)' }} 
         />
       </div>
 
-      {loading ? <p className="text-center">Loading fields...</p> : (
-        <div className="flex-col gap-md">
+      {loading ? <p className="text-center" style={{ position: 'relative', zIndex: 1 }}>Loading fields...</p> : (
+        <div className="flex-col gap-md" style={{ position: 'relative', zIndex: 1 }}>
           {fields.map((field, idx) => (
-            <div key={idx} className="card" style={{ padding: '16px', margin: 0, position: 'relative', overflow: 'hidden' }}>
+            <div key={idx} className="glass-card animate-slide-up" style={{ padding: '16px', margin: 0, position: 'relative', overflow: 'hidden', animationDelay: `${idx * 0.1}s`, opacity: 0 }}>
               <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: '6px', backgroundColor: field.status === 'healthy' ? 'var(--primary-green)' : field.status === 'warning' ? 'var(--danger)' : 'var(--warning)' }}></div>
               
               <div className="flex-between">

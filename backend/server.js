@@ -5,6 +5,9 @@ const multer = require('multer');
 const axios = require('axios');
 const fs = require('fs');
 const mongoose = require('mongoose');
+const crypto = require('crypto');
+const jimpModule = require('jimp');
+const Jimp = jimpModule.Jimp || jimpModule.default || jimpModule;
 
 // Import Models
 const User = require('./models/User');
@@ -139,12 +142,64 @@ app.post('/api/scan', upload.single('image'), async (req, res) => {
       // Simulate delay
       await new Promise(r => setTimeout(r, 2000));
 
+      let isPlant = true;
+      if (req.file) {
+        try {
+          // Check for plant colors using Jimp
+          const image = await Jimp.read(req.file.buffer);
+          
+          const stride = 10; // sample every 10th pixel for performance
+          let greenBrownPixels = 0;
+          let totalPixels = 0;
+          
+          for (let y = 0; y < image.bitmap.height; y += stride) {
+            for (let x = 0; x < image.bitmap.width; x += stride) {
+              const idx = (image.bitmap.width * y + x) << 2;
+              const r = image.bitmap.data[idx + 0];
+              const g = image.bitmap.data[idx + 1];
+              const b = image.bitmap.data[idx + 2];
+              
+              // Rough check for greens, yellows, browns
+              if (g > b && r < 200 && b < 150) {
+                greenBrownPixels++;
+              }
+              totalPixels++;
+            }
+          }
+          
+          const plantRatio = totalPixels > 0 ? greenBrownPixels / totalPixels : 0;
+          console.log('Plant color ratio:', plantRatio);
+          if (plantRatio < 0.05) {
+            isPlant = false;
+          }
+        } catch(err) {
+          console.log('Jimp processing error:', err.message);
+        }
+      }
+
       const possibleResults = [
         { disease: 'Early Blight', confidence: 96, crop: 'Tomato Plant', risk: 'High', description: 'Early blight is a common disease affecting tomatoes. Fungal infection can rapidly spread if untreated.', action: ['Remove lower leaves to increase airflow', 'Apply fungicide every 7-10 days'], products: ['Copper-based fungicide (e.g. Liquid Copper Soap)', 'Chlorothalonil fungicide', 'Balanced NPK fertilizer (5-10-5) to boost plant resilience'] },
         { disease: 'Powdery Mildew', confidence: 89, crop: 'Apple Tree', risk: 'Medium', description: 'Leaves display white powdery spots blocking photosynthesis.', action: ['Improve air circulation', 'Prune affected parts quickly'], products: ['Sulfur-based fungicidal spray', 'Neem Oil Extract', 'Avoid high-nitrogen fertilizers which provoke excessive vulnerable growth'] },
         { disease: 'Healthy', confidence: 99, crop: 'Unknown Plant', risk: 'Low', description: 'No signs of disease detected. Plant appears healthy.', action: ['Continue regular maintenance'], products: ['Standard all-purpose liquid fertilizer', 'Organic compost'] }
       ];
-      aiResult = possibleResults[Math.floor(Math.random() * possibleResults.length)];
+
+      if (!isPlant) {
+        aiResult = {
+          disease: 'Plant Not Recognized',
+          confidence: 100,
+          crop: 'Unknown',
+          risk: 'Low',
+          description: 'The uploaded image does not appear to contain a recognizable plant. Please upload a clear photo of leaves, stems, or fruits.',
+          action: ['Upload a clearer plant image'],
+          products: []
+        };
+      } else if (req.file) {
+        const hash = crypto.createHash('md5').update(req.file.buffer).digest('hex');
+        const intValue = parseInt(hash.substring(0, 8), 16);
+        aiResult = possibleResults[intValue % possibleResults.length];
+      } else {
+        aiResult = possibleResults[Math.floor(Math.random() * possibleResults.length)];
+      }
     } else {
       try {
         console.log('Sending image to real Plant.id API...');

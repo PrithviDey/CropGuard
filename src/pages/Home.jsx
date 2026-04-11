@@ -39,8 +39,10 @@ const Home = () => {
 
   return (
     <div className="animate-fade-in" style={{ padding: '24px', paddingBottom: '90px' }}>
+      <div className="bg-orb-1"></div>
+      <div className="bg-orb-2"></div>
       {/* Header Profile section */}
-      <div className="flex-between" style={{ marginBottom: '24px' }}>
+      <div className="flex-between" style={{ marginBottom: '24px', position: 'relative', zIndex: 1 }}>
         <div>
           <p className="text-sm">Good Morning,</p>
           <h2 className="text-h2">{user.name}</h2>
@@ -56,22 +58,22 @@ const Home = () => {
       </div>
 
       {/* Main Promo Card */}
-      <div className="card" style={{ 
-        background: 'linear-gradient(135deg, var(--primary-green) 0%, var(--primary-dark) 100%)',
-        color: 'white', position: 'relative', overflow: 'hidden'
+      <div className="glass-card" style={{ 
+        background: 'linear-gradient(135deg, rgba(46, 204, 113, 0.9) 0%, rgba(39, 174, 96, 0.95) 100%)',
+        color: 'white', position: 'relative', overflow: 'hidden', padding: '32px 24px', border: 'none'
       }}>
-        <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '100px', height: '100px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)' }}></div>
-        <div style={{ position: 'absolute', bottom: '-40px', right: '40px', width: '80px', height: '80px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)' }}></div>
-        <h3 className="text-h2" style={{ color: 'white', marginBottom: '8px', position: 'relative', zIndex: 1 }}>Prioritize Your<br/>Harvest with AI</h3>
-        <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '14px', marginBottom: '24px', position: 'relative', zIndex: 1, maxWidth: '70%' }}>
-          Detect diseases early and protect your yield with our smart scanner.
+        <div style={{ position: 'absolute', top: '-10px', right: '-10px', width: '150px', height: '150px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%)' }}></div>
+        <div style={{ position: 'absolute', bottom: '-40px', right: '40px', width: '100px', height: '100px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 70%)' }}></div>
+        <h3 className="text-h2" style={{ color: 'white', marginBottom: '12px', position: 'relative', zIndex: 1 }}>Protect Your<br/>Harvest with AI</h3>
+        <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '15px', marginBottom: '28px', position: 'relative', zIndex: 1, maxWidth: '80%', lineHeight: '1.4' }}>
+          Detect diseases early and secure your yield with our smart scanner.
         </p>
         <button 
           onClick={() => navigate('/scanner')}
           style={{ 
-            backgroundColor: 'white', color: 'var(--primary-dark)', border: 'none', padding: '12px 20px', 
-            borderRadius: '12px', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '8px', 
-            cursor: 'pointer', position: 'relative', zIndex: 1
+            backgroundColor: 'white', color: 'var(--primary-dark)', border: 'none', padding: '14px 24px', 
+            borderRadius: '16px', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '8px', 
+            cursor: 'pointer', position: 'relative', zIndex: 1, boxShadow: '0 8px 24px rgba(0,0,0,0.1)'
           }}
         >
           <ScanLine size={18} />
@@ -79,38 +81,38 @@ const Home = () => {
         </button>
       </div>
 
-      <h3 className="text-h3" style={{ marginBottom: '16px', marginTop: '32px' }}>Farm Status</h3>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginBottom: '32px' }}>
-        <div className="card" style={{ padding: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', margin: 0 }}>
+      <h3 className="text-h3" style={{ marginBottom: '16px', marginTop: '32px', position: 'relative', zIndex: 1 }}>Farm Status</h3>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginBottom: '32px', position: 'relative', zIndex: 1 }}>
+        <div className="glass-card" style={{ padding: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', margin: 0 }}>
           <CloudSun size={24} color="var(--primary-green)" style={{ marginBottom: '8px' }} />
           <span className="text-sm">Sunny</span>
           <span className="text-bold">24°C</span>
         </div>
-        <div className="card" style={{ padding: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', margin: 0 }}>
+        <div className="glass-card" style={{ padding: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', margin: 0 }}>
           <Droplets size={24} color="#3498db" style={{ marginBottom: '8px' }} />
           <span className="text-sm">Humidity</span>
           <span className="text-bold">65%</span>
         </div>
-        <div className="card" style={{ padding: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', margin: 0 }}>
+        <div className="glass-card" style={{ padding: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', margin: 0 }}>
           <Wind size={24} color="#95a5a6" style={{ marginBottom: '8px' }} />
           <span className="text-sm">Wind</span>
           <span className="text-bold">12km/h</span>
         </div>
       </div>
 
-      <div className="flex-between" style={{ marginBottom: '16px' }}>
+      <div className="flex-between" style={{ marginBottom: '16px', position: 'relative', zIndex: 1 }}>
         <h3 className="text-h3">Recent Activity</h3>
         <span className="text-sm text-primary text-bold" style={{ cursor: 'pointer' }} onClick={() => navigate('/dashboard')}>See All</span>
       </div>
       
-      <div className="flex-col gap-sm">
+      <div className="flex-col gap-sm" style={{ position: 'relative', zIndex: 1 }}>
         {recentScans.length === 0 && <p className="text-sm text-center">No recent scans.</p>}
         {recentScans.map((item, i) => (
-          <div key={i} className="card flex-between" style={{ padding: '16px', margin: 0, cursor: 'pointer' }} onClick={() => navigate('/results', { state: { result: item } })}>
+          <div key={i} className="glass-card flex-between" style={{ padding: '16px', margin: 0, cursor: 'pointer', animationDelay: `${i * 0.1}s` }} onClick={() => navigate('/results', { state: { result: item } })}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
               <div style={{ 
-                width: '40px', height: '40px', borderRadius: '10px', 
-                backgroundColor: item.ok ? 'var(--primary-light)' : '#fceaea',
+                width: '40px', height: '40px', borderRadius: '12px', 
+                backgroundColor: item.ok ? 'rgba(46, 204, 113, 0.1)' : 'rgba(231, 76, 60, 0.1)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center'
               }}>
                 <ScanLine size={20} color={item.ok ? 'var(--primary-green)' : 'var(--danger)'} />
