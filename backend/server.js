@@ -159,8 +159,16 @@ app.post('/api/scan', upload.single('image'), async (req, res) => {
               const g = image.bitmap.data[idx + 1];
               const b = image.bitmap.data[idx + 2];
               
-              // Rough check for greens, yellows, browns
-              if (g > b && r < 200 && b < 150) {
+              // Ignore completely dark/black pixels to avoid noise filtering
+              const isNotTooDark = r > 30 || g > 30 || b > 30;
+              
+              // Greenish hue: G should be noticeably higher than B and not massively lower than R
+              const isGreenish = (g > b + 10) && (g > r - 40);
+              
+              // Brownish/Yellow hue: R and G are higher, B is quite low
+              const isBrownish = (r > b + 20) && (g > b + 10) && (r > 60);
+              
+              if (isNotTooDark && (isGreenish || isBrownish)) {
                 greenBrownPixels++;
               }
               totalPixels++;
