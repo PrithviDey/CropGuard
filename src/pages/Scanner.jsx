@@ -14,8 +14,13 @@ const Scanner = () => {
       const formData = new FormData();
       formData.append('image', file, 'scan.jpg');
 
+      const userStr = localStorage.getItem('user');
+      const userObj = userStr ? JSON.parse(userStr) : null;
+      const headers = userObj ? { 'User-ID': userObj.id } : {};
+
       const response = await fetch('https://cropguard-cyvq.onrender.com/api/scan', {
         method: 'POST',
+        headers: headers,
         body: formData
       });
       const data = await response.json();

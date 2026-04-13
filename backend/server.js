@@ -63,16 +63,46 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
-// Helper function to get default user for unauthenticated requests
-const getDefaultUserId = async () => {
-  const u = await User.findOne({ email: 'farmer@cropguard.ai' });
-  return u ? u._id : null;
+// Signup Endpoint
+app.post('/api/auth/signup', async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+    
+    // Check if user already exists
+    const existing = await User.findOne({ email });
+    if (existing) {
+      return res.status(400).json({ success: false, message: 'Email is already registered' });
+    }
+
+    // Create new user
+    const newUser = await User.create({ name, email, password });
+    
+    // Directly log them in automatically
+    res.json({ success: true, token: 'mock-jwt-token-123', user: { id: newUser._id, name: newUser.name, email: newUser.email } });
+  } catch (error) {
+    console.error('Signup Error:', error);
+    res.status(500).json({ success: false, message: 'Failed to register account' });
+  }
+});
+
+// Helper function to get the requesting user for authenticated requests
+const getUserId = async (req) => {
+  const customId = req.headers['user-id'];
+  if (customId) {
+    try {
+      const u = await User.findById(customId);
+      if (u) return u._id;
+    } catch(e) { }
+  }
+  // Fallback to demo user if no header is provided (e.g. legacy testing)
+  const fallbackUser = await User.findOne({ email: 'farmer@cropguard.ai' });
+  return fallbackUser ? fallbackUser._id : null;
 };
 
 // 2. Dashboard Endpoint
 app.get('/api/dashboard', async (req, res) => {
   try {
-    const userId = await getDefaultUserId();
+    const userId = await getUserId(req);
 
     const totalScans = await Scan.countDocuments({ user: userId });
     const activeDiseases = await Scan.countDocuments({ user: userId, risk: { $in: ['High', 'Medium'] } });
@@ -101,7 +131,7 @@ app.get('/api/dashboard', async (req, res) => {
 // 3. Fields Endpoints
 app.get('/api/fields', async (req, res) => {
   try {
-    const userId = await getDefaultUserId();
+    const userId = await getUserId(req);
     const fields = await Field.find({ user: userId });
     res.json({ success: true, data: fields });
   } catch (error) {
@@ -111,7 +141,7 @@ app.get('/api/fields', async (req, res) => {
 
 app.post('/api/fields', async (req, res) => {
   try {
-    const userId = await getDefaultUserId();
+    const userId = await getUserId(req);
     const newField = await Field.create({
       user: userId,
       name: req.body.name || 'New Field',
@@ -233,7 +263,7 @@ app.post('/api/scan', upload.single('image'), async (req, res) => {
       aiResult = possibleResults[intValue % possibleResults.length];
     }
 
-    const userId = await getDefaultUserId();
+    const userId = await getUserId(req);
 
     await Scan.create({
       user: userId,

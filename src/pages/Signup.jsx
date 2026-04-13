@@ -2,25 +2,26 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Leaf } from 'lucide-react';
 
-const Login = () => {
+const Signup = () => {
   const navigate = useNavigate();
 
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = async (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
     try {
-      const email = e.target.elements[0].value;
-      const password = e.target.elements[1].value;
+      const name = e.target.elements[0].value;
+      const email = e.target.elements[1].value;
+      const password = e.target.elements[2].value;
 
-      const response = await fetch('https://cropguard-cyvq.onrender.com/api/auth/login', {
+      const response = await fetch('https://cropguard-cyvq.onrender.com/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ name, email, password })
       });
 
       const data = await response.json();
@@ -30,7 +31,7 @@ const Login = () => {
         localStorage.setItem('user', JSON.stringify(data.user));
         navigate('/home');
       } else {
-        setError(data.message || 'Login failed');
+        setError(data.message || 'Signup failed');
       }
     } catch (err) {
       setError('Cannot connect to server. Ensure backend is running.');
@@ -53,7 +54,7 @@ const Login = () => {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '40px 20px'
+        padding: '30px 20px'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
           <div style={{ backgroundColor: 'var(--primary-green)', padding: '12px', borderRadius: '12px', color: '#fff' }}>
@@ -61,12 +62,12 @@ const Login = () => {
           </div>
           <h1 className="text-h1" style={{ color: 'var(--primary-green)' }}>CropGuard.AI</h1>
         </div>
-        <p className="text-body text-center">Your intelligent partner for healthy harvests</p>
+        <p className="text-body text-center">Join the future of intelligent farming</p>
       </div>
 
       {/* Form Container */}
       <div className="glass-card" style={{
-        flex: 2,
+        flex: 3,
         padding: '40px 24px',
         margin: '0',
         borderBottomLeftRadius: 0,
@@ -76,43 +77,35 @@ const Login = () => {
         marginTop: '-32px',
         zIndex: 10
       }}>
-        <h2 className="text-h2" style={{ marginBottom: '24px' }}>Welcome Back!</h2>
+        <h2 className="text-h2" style={{ marginBottom: '24px' }}>Create Account</h2>
 
         {error && <div style={{ padding: '12px', backgroundColor: '#fceaea', color: 'var(--danger)', borderRadius: '8px', marginBottom: '16px', fontSize: '14px' }}>{error}</div>}
 
-        <form onSubmit={handleLogin}>
+        <form onSubmit={handleSignup}>
+          <div className="form-group">
+            <label className="form-label">Full Name</label>
+            <input type="text" className="form-input" placeholder="Enter your name" required />
+          </div>
           <div className="form-group">
             <label className="form-label">Email Address</label>
-            <input type="email" className="form-input" placeholder="Enter your email" defaultValue="farmer@cropguard.ai" required />
+            <input type="email" className="form-input" placeholder="Enter your email" required />
           </div>
           <div className="form-group">
             <label className="form-label">Password</label>
-            <input type="password" className="form-input" placeholder="Enter your password" defaultValue="password" required />
+            <input type="password" className="form-input" placeholder="Choose a password" minLength="6" required />
           </div>
 
-          <div className="flex-between" style={{ marginBottom: '32px' }}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: 'var(--text-muted)' }}>
-              <input type="checkbox" defaultChecked style={{ accentColor: 'var(--primary-green)' }} /> Remember me
-            </label>
-            <a href="#" className="text-sm text-primary text-bold" style={{ textDecoration: 'none' }}>Forgot Password?</a>
-          </div>
-
-          <button type="submit" className="btn-primary" disabled={loading} style={{ opacity: loading ? 0.7 : 1 }}>
-            {loading ? 'Connecting to server...' : 'Sign In'}
+          <button type="submit" className="btn-primary" disabled={loading} style={{ opacity: loading ? 0.7 : 1, marginTop: '16px' }}>
+            {loading ? 'Creating account...' : 'Create Account'}
           </button>
-          {loading && (
-            <p className="text-sm mt-3 text-center" style={{ color: 'var(--text-muted)', marginTop: '10px' }}>
-              Waking up the server... This may take up to 50s.
-            </p>
-          )}
         </form>
 
         <div style={{ marginTop: '24px', textAlign: 'center' }}>
-          <p className="text-sm">Don't have an account? <span onClick={() => navigate('/signup')} className="text-primary text-bold" style={{ cursor: 'pointer', textDecoration: 'none' }}>Sign Up</span></p>
+          <p className="text-sm">Already have an account? <span onClick={() => navigate('/login')} className="text-primary text-bold" style={{ cursor: 'pointer', textDecoration: 'none' }}>Sign In</span></p>
         </div>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default Signup;

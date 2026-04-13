@@ -6,7 +6,11 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('https://cropguard-cyvq.onrender.com/api/dashboard')
+    const userStr = localStorage.getItem('user');
+    const userObj = userStr ? JSON.parse(userStr) : null;
+    const headers = userObj ? { 'User-ID': userObj.id } : {};
+
+    fetch('https://cropguard-cyvq.onrender.com/api/dashboard', { headers })
       .then(r => r.json())
       .then(json => {
         if (json.success) setStats(json.data.stats);

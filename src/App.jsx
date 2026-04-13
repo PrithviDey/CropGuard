@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 import { Moon, Sun } from 'lucide-react';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
+import Signup from './pages/Signup';
 import Home from './pages/Home';
 import Scanner from './pages/Scanner';
 import Results from './pages/Results';
@@ -13,8 +14,8 @@ import BottomNav from './components/BottomNav';
 // Layout component to selectively show BottomNav
 const AppLayout = ({ children, isDarkMode, toggleTheme }) => {
   const location = useLocation();
-  // Don't show bottom nav on landing, login or scanner pages
-  const hideNavPaths = ['/', '/login', '/scanner', '/results'];
+  // Don't show bottom nav on landing, login, signup or scanner pages
+  const hideNavPaths = ['/', '/login', '/signup', '/scanner', '/results'];
   const showNav = !hideNavPaths.includes(location.pathname);
 
   return (
@@ -62,6 +63,7 @@ function App() {
           <Route path="/" element={<Landing />} />
           <Route path="/home" element={<Home />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
           <Route path="/scanner" element={<Scanner />} />
           <Route path="/results" element={<Results />} />
           <Route path="/dashboard" element={<Dashboard />} />

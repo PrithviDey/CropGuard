@@ -11,7 +11,11 @@ const FieldManagement = () => {
 
   const fetchFields = async () => {
     try {
-      const res = await fetch('https://cropguard-cyvq.onrender.com/api/fields');
+      const userStr = localStorage.getItem('user');
+      const userObj = userStr ? JSON.parse(userStr) : null;
+      const headers = userObj ? { 'User-ID': userObj.id } : {};
+
+      const res = await fetch('https://cropguard-cyvq.onrender.com/api/fields', { headers });
       const json = await res.json();
       if (json.success) setFields(json.data);
       setLoading(false);
@@ -26,9 +30,15 @@ const FieldManagement = () => {
     if (!name) return;
 
     try {
+      const userStr = localStorage.getItem('user');
+      const userObj = userStr ? JSON.parse(userStr) : null;
+
       const res = await fetch('https://cropguard-cyvq.onrender.com/api/fields', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          ...(userObj && { 'User-ID': userObj.id })
+        },
         body: JSON.stringify({ name, crop: 'Unknown Field', area: '10 Acres' })
       });
       const data = await res.json();
