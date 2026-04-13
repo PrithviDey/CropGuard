@@ -155,14 +155,18 @@ app.post('/api/scan', upload.single('image'), async (req, res) => {
                     text: "You are an expert botanist AI. Analyze the attached image. If it does NOT clearly contain a plant, leaf, or crop, respond with { \"isPlant\": false } and absolutely nothing else. If it IS a plant, analyze its health and respond strictly in this JSON format without markdown blocks: { \"isPlant\": true, \"disease\": \"Healthy\" or name of disease, \"confidence\": integer 1-100, \"crop\": \"Name of crop\", \"risk\": \"Low\" | \"Medium\" | \"High\", \"description\": \"Short explanation\", \"action\": [\"action 1\"], \"products\": [\"product 1\"] }"
                   },
                   {
-                    inlineData: {
-                      mimeType: mimeType,
+                    inline_data: {
+                      mime_type: mimeType,
                       data: imageAsBase64
                     }
                   }
                 ]
               }
-            ]
+            ],
+            generationConfig: {
+              response_mime_type: "application/json",
+              temperature: 0.2
+            }
           },
           { headers: { 'Content-Type': 'application/json' } }
         );
