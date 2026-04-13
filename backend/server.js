@@ -146,7 +146,7 @@ app.post('/api/scan', upload.single('image'), async (req, res) => {
         const mimeType = req.file.mimetype || "image/jpeg";
 
         const geminiResponse = await axios.post(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`,
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiApiKey}`,
           {
             contents: [
               {
