@@ -155,8 +155,8 @@ app.post('/api/scan', upload.single('image'), async (req, res) => {
                     text: "You are an expert botanist AI. Analyze the attached image. If it does NOT clearly contain a plant, leaf, or crop, respond with { \"isPlant\": false } and absolutely nothing else. If it IS a plant, analyze its health and respond strictly in this JSON format without markdown blocks: { \"isPlant\": true, \"disease\": \"Healthy\" or name of disease, \"confidence\": integer 1-100, \"crop\": \"Name of crop\", \"risk\": \"Low\" | \"Medium\" | \"High\", \"description\": \"Short explanation\", \"action\": [\"action 1\"], \"products\": [\"product 1\"] }"
                   },
                   {
-                    inline_data: {
-                      mime_type: mimeType,
+                    inlineData: {
+                      mimeType: mimeType,
                       data: imageAsBase64
                     }
                   }
@@ -164,39 +164,54 @@ app.post('/api/scan', upload.single('image'), async (req, res) => {
               }
             ],
             generationConfig: {
-              response_mime_type: "application/json",
+              responseMimeType: "application/json",
               temperature: 0.2
             }
           },
           { headers: { 'Content-Type': 'application/json' } }
         );
 
-        const responseText = geminiResponse.data.candidates[0].content.parts[0].text;
+        const candidate = geminiResponse.data.candidates[0];
         
-        // Clean JSON string to prevent markdown block parsing errors
-        const cleanJsonText = responseText.replace(/```json/gi, '').replace(/```/g, '').trim();
-        const geminiData = JSON.parse(cleanJsonText);
-
-        if (!geminiData.isPlant) {
+        if (!candidate.content) {
+          console.log("Gemini blocked the image (safety/face filter):", candidate.finishReason);
           aiResult = {
-            disease: 'Plant Not Recognized',
+            disease: 'Plant Not Recognized (AI Block)',
             confidence: 100,
             crop: 'Unknown',
             risk: 'Low',
-            description: 'The uploaded image does not appear to contain a recognizable plant. Please upload a clear photo of leaves, stems, or fruits.',
-            action: ['Upload a clearer plant image'],
+            description: 'This image was blocked by Gemini AI safety filters (likely because it contains a person, face, or unsupported content). Please upload a clear photo of a plant leaf instead!',
+            action: ['Upload a valid plant image'],
             products: []
           };
         } else {
-          aiResult = {
-            disease: geminiData.disease || 'Unknown Disease',
-            confidence: geminiData.confidence || 85,
-            crop: geminiData.crop || 'Detected Plant',
-            risk: geminiData.risk || 'Medium',
-            description: geminiData.description || 'Analysis complete.',
-            action: geminiData.action || ['Monitor plant closely'],
-            products: geminiData.products || []
-          };
+          const responseText = candidate.content.parts[0].text;
+          
+          // Clean JSON string to prevent markdown block parsing errors
+          const cleanJsonText = responseText.replace(/```json/gi, '').replace(/```/g, '').trim();
+          const geminiData = JSON.parse(cleanJsonText);
+
+          if (!geminiData.isPlant) {
+            aiResult = {
+              disease: 'Plant Not Recognized',
+              confidence: 100,
+              crop: 'Unknown',
+              risk: 'Low',
+              description: 'The uploaded image does not appear to contain a recognizable plant. Please upload a clear photo of leaves, stems, or fruits.',
+              action: ['Upload a clearer plant image'],
+              products: []
+            };
+          } else {
+            aiResult = {
+              disease: geminiData.disease || 'Unknown Disease',
+              confidence: geminiData.confidence || 85,
+              crop: geminiData.crop || 'Detected Plant',
+              risk: geminiData.risk || 'Medium',
+              description: geminiData.description || 'Analysis complete.',
+              action: geminiData.action || ['Monitor plant closely'],
+              products: geminiData.products || []
+            };
+          }
         }
       } catch (geminiError) {
         console.error('Gemini API Error:', geminiError?.response?.data || geminiError.message);
