@@ -17,7 +17,7 @@ const Home = () => {
 
     const fetchData = async () => {
       try {
-        const res = await fetch('https://cropguard-8rie.onrender.com/api/dashboard');
+        const res = await fetch('https://cropguard-cyvq.onrender.com/api/dashboard');
         const json = await res.json();
         if (json.success) {
           setData(json.data);

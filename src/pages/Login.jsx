@@ -17,7 +17,7 @@ const Login = () => {
       const email = e.target.elements[0].value;
       const password = e.target.elements[1].value;
 
-      const response = await fetch('https://cropguard-8rie.onrender.com/api/auth/login', {
+      const response = await fetch('https://cropguard-cyvq.onrender.com/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
