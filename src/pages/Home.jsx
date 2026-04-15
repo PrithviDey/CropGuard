@@ -1,11 +1,55 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ScanLine, CloudSun, Droplets, Wind, LogOut } from 'lucide-react';
+import { ScanLine, CloudSun, Droplets, Wind, LogOut, Sun, Cloud, CloudRain } from 'lucide-react';
 
 const Home = () => {
   const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [user, setUser] = useState({ name: 'Farmer' });
+  const [weather, setWeather] = useState({ temp: '--', humidity: '--', wind: '--', condition: 'Locating...', icon: 'CloudSun' });
+
+  useEffect(() => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+          try {
+            const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code`);
+            const json = await res.json();
+            
+            if (json.current) {
+              const current = json.current;
+              let conditionStr = "Sunny";
+              let mainIcon = "Sun";
+              
+              if (current.weather_code >= 50 && current.weather_code <= 69) {
+                 conditionStr = "Raining";
+                 mainIcon = "CloudRain";
+              } else if (current.weather_code >= 1 && current.weather_code <= 4) {
+                 conditionStr = "Cloudy";
+                 mainIcon = "Cloud";
+              }
+              
+              setWeather({
+                temp: `${Math.round(current.temperature_2m)}°C`,
+                humidity: `${current.relative_humidity_2m}%`,
+                wind: `${Math.round(current.wind_speed_10m)}km/h`,
+                condition: conditionStr,
+                icon: mainIcon
+              });
+            }
+          } catch(err) {
+            setWeather({ temp: "24°C", humidity: "65%", wind: "12km/h", condition: "Sunny", icon: "CloudSun" });
+          }
+        },
+        (error) => {
+          setWeather({ temp: "24°C", humidity: "65%", wind: "12km/h", condition: "Sunny (Offline)", icon: "CloudSun" });
+        }
+      );
+    } else {
+      setWeather({ temp: "24°C", humidity: "65%", wind: "12km/h", condition: "Sunny (No GPS)", icon: "CloudSun" });
+    }
+  }, []);
 
   useEffect(() => {
     // Check Auth
@@ -89,19 +133,23 @@ const Home = () => {
       <h3 className="text-h3" style={{ marginBottom: '16px', marginTop: '32px', position: 'relative', zIndex: 1 }}>Farm Status</h3>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginBottom: '32px', position: 'relative', zIndex: 1 }}>
         <div className="glass-card" style={{ padding: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', margin: 0 }}>
-          <CloudSun size={24} color="var(--primary-green)" style={{ marginBottom: '8px' }} />
-          <span className="text-sm">Sunny</span>
-          <span className="text-bold">24°C</span>
+          {weather.icon === 'Sun' && <Sun size={24} color="#f39c12" style={{ marginBottom: '8px' }} />}
+          {weather.icon === 'Cloud' && <Cloud size={24} color="#bdc3c7" style={{ marginBottom: '8px' }} />}
+          {weather.icon === 'CloudRain' && <CloudRain size={24} color="#3498db" style={{ marginBottom: '8px' }} />}
+          {weather.icon === 'CloudSun' && <CloudSun size={24} color="var(--primary-green)" style={{ marginBottom: '8px' }} />}
+          
+          <span className="text-sm text-center" style={{ minWidth: '70px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{weather.condition}</span>
+          <span className="text-bold">{weather.temp}</span>
         </div>
         <div className="glass-card" style={{ padding: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', margin: 0 }}>
           <Droplets size={24} color="#3498db" style={{ marginBottom: '8px' }} />
           <span className="text-sm">Humidity</span>
-          <span className="text-bold">65%</span>
+          <span className="text-bold">{weather.humidity}</span>
         </div>
         <div className="glass-card" style={{ padding: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', margin: 0 }}>
           <Wind size={24} color="#95a5a6" style={{ marginBottom: '8px' }} />
           <span className="text-sm">Wind</span>
-          <span className="text-bold">12km/h</span>
+          <span className="text-bold">{weather.wind}</span>
         </div>
       </div>
 
