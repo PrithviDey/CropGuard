@@ -51,8 +51,13 @@ const Home = () => {
           <button onClick={handleLogout} style={{ background: 'none', border: 'none', color: 'var(--text-muted)' }}>
             <LogOut size={20} />
           </button>
-          <div style={{ width: '48px', height: '48px', borderRadius: '24px', backgroundColor: '#e2e8f0', overflow: 'hidden' }}>
-            <img src="https://i.pravatar.cc/150?img=11" alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          <div style={{ 
+            width: '48px', height: '48px', borderRadius: '24px', 
+            background: 'linear-gradient(135deg, var(--primary-green) 0%, var(--primary-dark) 100%)', 
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            color: 'white', fontSize: '20px', fontWeight: 'bold', boxShadow: '0 4px 10px rgba(39, 174, 96, 0.3)'
+          }}>
+            {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
           </div>
         </div>
       </div>
